@@ -27,6 +27,15 @@ def download_audio(path,video_url):
     with yt_dlp.YoutubeDL(ydl_opts) as ydl:
         ydl.download([video_url])
 
+def download_video(path,video_url,resolution):
+    ydl_opts = {
+        'format': f'bestvideo[height<={resolution[:-1]}]+bestaudio/best[height<={resolution[:-1]}]',  # Get the best quality audio
+        'outtmpl': f'{path}/%(title)s.%(ext)s',
+        'merge_output_format': "mp4",
+    }
+    with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+        ydl.download([video_url])
+
 def download(): 
     """ This fuction handle all the program logic """
     path = askdirectory(title='Select Folder')
@@ -38,9 +47,7 @@ def download():
         if downloadType == "audio":
             download_audio(path,fix_url(videoLink))
         else:
-            file = video.streams.filter(resolution=resolution).first()
-
-        #file.download(path)
+            download_video(path,fix_url(videoLink),resolution)
 
     except:
         showerror("error", "Unable to download file at this time!")
